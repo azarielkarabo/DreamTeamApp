@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace AlphaVantageStockApi
 {
@@ -46,15 +47,16 @@ namespace AlphaVantageStockApi
                 Console.WriteLine($"Stock Data for {symbol}:");
                 if (stockData != null && stockData.TimeSeriesDaily != null)
                 {
-                    var latestData = stockData.TimeSeriesDaily.FirstOrDefault();
-                    if (latestData.Value != null)
+                    var latestDate = stockData.TimeSeriesDaily.Keys.FirstOrDefault();
+                    var latestData = stockData.TimeSeriesDaily[latestDate];
+                    if (latestData != null)
                     {
-                        Console.WriteLine($"Date: {latestData.Key}");
-                        Console.WriteLine($"Open: {latestData.Value.Open}");
-                        Console.WriteLine($"High: {latestData.Value.High}");
-                        Console.WriteLine($"Low: {latestData.Value.Low}");
-                        Console.WriteLine($"Close: {latestData.Value.Close}");
-                        Console.WriteLine($"Volume: {latestData.Value.Volume}\n");
+                        Console.WriteLine($"Date: {latestDate}");
+                        Console.WriteLine($"Open: {latestData.Open}");
+                        Console.WriteLine($"High: {latestData.High}");
+                        Console.WriteLine($"Low: {latestData.Low}");
+                        Console.WriteLine($"Close: {latestData.Close}");
+                        Console.WriteLine($"Volume: {latestData.Volume}\n");
                     }
                 }
             }
@@ -67,15 +69,25 @@ namespace AlphaVantageStockApi
 
     public class StockResponse
     {
+        [JsonPropertyName("Time Series (Daily)")]
         public Dictionary<string, DailyStockData> TimeSeriesDaily { get; set; }
     }
 
     public class DailyStockData
     {
+        [JsonPropertyName("1. open")]
         public string Open { get; set; }
+
+        [JsonPropertyName("2. high")]
         public string High { get; set; }
+
+        [JsonPropertyName("3. low")]
         public string Low { get; set; }
+
+        [JsonPropertyName("4. close")]
         public string Close { get; set; }
+
+        [JsonPropertyName("5. volume")]
         public string Volume { get; set; }
     }
 }
